@@ -124,7 +124,7 @@ func (v *VmService) CreateVm(vm Vm, cfgVm CfgVm) (*string, error) {
 			return &j.ResultId.Value, err
 		}
 
-		log.Printf("[DEBUG] cfgvm: %s", cfgVm)
+		//log.Printf("[DEBUG] cfgvm: %s", cfgVm)
 
 	}
 
