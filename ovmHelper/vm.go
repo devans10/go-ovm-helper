@@ -2,6 +2,7 @@ package ovmHelper
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -9,6 +10,29 @@ import (
 
 type VmService struct {
 	client *Client
+}
+
+func (v *VmService) GetIdFromName(name string) (*Id, error) {
+	req, err := v.client.NewRequest("GET", "/ovm/core/wsapi/rest/Vm/id", nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	m := []Id{}
+	_, err = v.client.Do(req, m)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, id := range m {
+		if id.Name == name {
+			returnId := id
+			return &returnId, nil
+		}
+	}
+
+	return nil, errors.New("[error] Failed to find id for " + name)
 }
 
 func (v *VmService) Read(id string) (*Vm, error) {
