@@ -36,11 +36,11 @@ func (j *JobService) Running(id string) bool {
 }
 
 func (j *JobService) WaitForJob(id string) {
-	durration := time.Duration(500000)
+	duration := time.Duration(500000)
 	for j.Running(id) {
-		time.Sleep(durration * time.Microsecond)
-		if durration <= 5000000 {
-			durration += 500000
+		time.Sleep(duration * time.Microsecond)
+		if duration <= 5000000 {
+			duration += 500000
 		}
 	}
 }
