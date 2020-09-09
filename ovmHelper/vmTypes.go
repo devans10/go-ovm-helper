@@ -33,8 +33,8 @@ type Vm struct {
 	VmConfigFileAbsolutePath string `json:"vmConfigFileAbsolutePath,omitempty"`
 	VmConfigFileMountedPath  string `json:"vmConfigFileMountedPath,omitempty"`
 	Architecture             string `json:"architecture,omitempty"`
-	VmDiskMappingIds         *[]Id  `json:"vmDiskMappingIds,omitempty"`
-	VirtualNicIds            *[]Id  `json:"virtualNicIds,omitempty"`
+	VmDiskMappingIds         []*Id  `json:"vmDiskMappingIds,omitempty"`
+	VirtualNicIds            []*Id  `json:"virtualNicIds,omitempty"`
 	RepositoryId             *Id    `json:"repositoryId,omitempty"`
 	ServerPoolId             *Id    `json:"serverPoolId,omitempty"`
 	ServerId                 *Id    `json:"serverId,omitempty"`
