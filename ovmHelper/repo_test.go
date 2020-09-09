@@ -4,10 +4,6 @@ import (
 	"testing"
 )
 
-func TestGetIdFromName(t *testing.T) {
-
-}
-
 func TestAccRepos(t *testing.T) {
 	testAccPreChecks(t)
 	c := testAccGenerateClient(t)
