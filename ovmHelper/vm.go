@@ -19,7 +19,7 @@ func (v *VmService) GetIdFromName(name string) (*Id, error) {
 	}
 
 	m := []Id{}
-	_, err = v.client.Do(req, m)
+	_, err = v.client.Do(req, &m)
 
 	if err != nil {
 		return nil, err
