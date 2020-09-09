@@ -2,6 +2,7 @@ package ovmHelper
 
 import (
 	"errors"
+	"log"
 )
 
 type RepoService struct {
@@ -22,6 +23,7 @@ func (r *RepoService) GetIdFromName(name string) (*Id, error) {
 	}
 
 	for _, id := range m {
+		log.Printf("[DEBUG] Repo Name: %s", id.Name)
 		if id.Name == name {
 			returnId := id
 			return &returnId, nil
