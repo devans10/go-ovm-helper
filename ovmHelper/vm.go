@@ -193,24 +193,28 @@ func (v *VmService) UpdateVm(vmId string, vm Vm) error {
 
 	p["vmId"] = vmId
 	rVm, _ := v.client.Vms.Read(vmId)
-	if rVm.CpuCount != vm.CpuCount {
-		rVm.CpuCount = vm.CpuCount
-	}
-	if rVm.CpuCountLimit != vm.CpuCountLimit {
-		rVm.CpuCountLimit = vm.CpuCountLimit
-	}
-	if rVm.Name != vm.Name {
-		rVm.Name = vm.Name
-	}
-	if rVm.VmDomainType != vm.VmDomainType {
-		rVm.VmDomainType = vm.VmDomainType
-	}
-	if rVm.Memory != vm.Memory {
-		rVm.Memory = vm.Memory
-	}
-	if rVm.HugePagesEnabled != vm.HugePagesEnabled {
-		rVm.HugePagesEnabled = vm.HugePagesEnabled
-	}
+
+	rVm.Name = vm.Name
+	rVm.Description = vm.Description
+	rVm.BootOrder = vm.BootOrder
+	rVm.CpuCount = vm.CpuCount
+	rVm.CpuCountLimit = vm.CpuCountLimit
+	rVm.CpuPriority = vm.CpuPriority
+	rVm.CpuUtilizationCap = vm.CpuUtilizationCap
+	rVm.HighAvailability = vm.HighAvailability
+	rVm.HugePagesEnabled = vm.HugePagesEnabled
+	rVm.KeymapName = vm.KeymapName
+	rVm.Memory = vm.Memory
+	rVm.MemoryLimit = vm.MemoryLimit
+	rVm.NetworkInstallPath = vm.NetworkInstallPath
+	rVm.OsType = vm.OsType
+	rVm.ServerId = vm.ServerId
+	rVm.VmDomainType = vm.VmDomainType
+	rVm.VmMouseType = vm.VmMouseType
+	rVm.VmRunState = vm.VmRunState
+	rVm.VmStartPolicy = vm.VmStartPolicy
+	rVm.RestartActionOnCrash = vm.RestartActionOnCrash	
+	
 	req, err := v.client.NewRequest("PUT", "/ovm/core/wsapi/rest/Vm/"+vmId, p, rVm)
 	if err != nil {
 		return err
