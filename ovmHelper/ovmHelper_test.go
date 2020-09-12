@@ -1,4 +1,4 @@
-package ovmHelper
+package ovmhelper
 
 import (
 	"fmt"

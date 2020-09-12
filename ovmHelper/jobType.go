@@ -1,7 +1,8 @@
-package ovmHelper
+package ovmhelper
 
 import "fmt"
 
+// JobError - interface for a failed job
 type JobError struct {
 	Message string `json:"message"`
 }
@@ -13,16 +14,16 @@ func (j *JobError) Error() string {
 func (j *JobResponse) succeed() bool {
 	if j.JobRunState != "SUCCESS" {
 		return false
-	} else {
-		return true
 	}
+	return true
 }
 
+// JobResponse - Job response interface
 type JobResponse struct {
-	Id                           *Id       `json:"id"`
+	ID                           *ID       `json:"id"`
 	Done                         bool      `json:"done,omitempty"`
-	ResultId                     *Id       `json:"resultId,omitempty"`
-	ResourceGroupIds             *[]Id     `json:"resourceGroupIds,omitempty"`
+	ResultID                     *ID       `json:"resultId,omitempty"`
+	ResourceGroupIds             *[]ID     `json:"resourceGroupIds,omitempty"`
 	SummaryDone                  bool      `json:"summaryDone,omitempty"`
 	JobGroup                     bool      `json:"jobGroup,omitempty"`
 	JobRunState                  string    `json:"jobRunState,omitempty"`
@@ -38,8 +39,8 @@ type JobResponse struct {
 	LatestSummaryProgressMessage string    `json:"latestSummaryProgressMessage,omitempty"`
 	StartTime                    int64     `json:"startTime,omitempty"`
 	EndTime                      int64     `json:"endTime,omitempty"`
-	ParentJobId                  *Id       `json:"parentJobId,omitempty"`
-	ChildJobIds                  *[]Id     `json:"childJobIds,omitempty"`
+	ParentJobID                  *ID       `json:"parentJobId,omitempty"`
+	ChildJobIds                  *[]ID     `json:"childJobIds,omitempty"`
 	Error                        *JobError `json:"error,omitempty"`
 	User                         string    `json:"user,omitempty"`
 	WsErrorCode                  string    `json:"wsErrorCode,omitempty"`

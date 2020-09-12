@@ -1,14 +1,15 @@
-package ovmHelper
+package ovmhelper
 
+// Vmcnm - VM Clone Network Mapping
 type Vmcnm struct {
-	NetworkId           *Id    `json:"networkId,omitempty"`
-	VmCloneDefinitionId *Id    `json:"vmCloneDefinitionId,omitempty"`
-	VirtualNicId        *Id    `json:"virtualNicId,omitempty"`
-	Id                  *Id    `json:"id,omitempty"`
+	NetworkID           *ID    `json:"networkId,omitempty"`
+	VMCloneDefinitionID *ID    `json:"vmCloneDefinitionId,omitempty"`
+	VirtualNicID        *ID    `json:"virtualNicId,omitempty"`
+	ID                  *ID    `json:"id,omitempty"`
 	Name                string `json:"name,omitempty"`
 	Description         string `json:"description,omitempty"`
 	Locked              bool   `json:"locked,imitempty"`
 	ReadOnly            bool   `json:"readOnly,omitempty"`
 	Generation          int    `json:"generation,omitempty"`
-	ResourceGroupIds    *[]Id  `json:"resourceGroupIds,omitempty"`
+	ResourceGroupIDs    *[]ID  `json:"resourceGroupIds,omitempty"`
 }

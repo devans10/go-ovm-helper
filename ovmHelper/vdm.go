@@ -1,24 +1,26 @@
-package ovmHelper
+package ovmhelper
 
 import (
 	"fmt"
 	"log"
 )
 
+// VdmService - Virtual Disk Mapping interface
 type VdmService struct {
 	client *Client
 }
 
-func (v *VdmService) Read(vmId string, vdmId string) (*Vdm, error) {
+// Read - Read the Virtual Disk Mapping object
+func (v *VdmService) Read(vmID string, vdmID string) (*Vdm, error) {
 
-	listOfVdm, err := v.List(vmId)
+	listOfVdm, err := v.List(vmID)
 	if err != nil {
 		return nil, err
 	}
 
 	for _, v := range *listOfVdm {
-		if vdmId == v.Id.Value {
-			log.Printf("[DEBUG] Find VDM id: %v", vdmId)
+		if vdmID == v.ID.Value {
+			log.Printf("[DEBUG] Find VDM id: %v", vdmID)
 			return &v, nil
 		}
 	}
@@ -27,8 +29,10 @@ func (v *VdmService) Read(vmId string, vdmId string) (*Vdm, error) {
 	return nil, nil
 
 }
-func (v *VdmService) List(vmId string) (*[]Vdm, error) {
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VmDiskMapping", vmId)
+
+// List - List the Virtual Disk Mappings
+func (v *VdmService) List(vmID string) (*[]Vdm, error) {
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VmDiskMapping", vmID)
 	req, err := v.client.NewRequest("GET", url, nil, nil)
 	if err != nil {
 		return nil, err
@@ -43,9 +47,10 @@ func (v *VdmService) List(vmId string) (*[]Vdm, error) {
 	return m, err
 }
 
+// Create - Create a Virtual Disk Mapping
 func (v *VdmService) Create(vdm Vdm) (*string, error) {
 
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VmDiskMapping", vdm.VmId.Value)
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VmDiskMapping", vdm.VMID.Value)
 	req, err := v.client.NewRequest("POST", url, nil, vdm)
 	if err != nil {
 		fmt.Println("error")
@@ -61,17 +66,18 @@ func (v *VdmService) Create(vdm Vdm) (*string, error) {
 		return nil, err
 	}
 
-	v.client.Jobs.WaitForJob(m.Id.Value)
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return nil, j.Error
 	}
-	return &j.ResultId.Value, nil
+	return &j.ResultID.Value, nil
 }
 
-func (v *VdmService) Delete(vmId string, vdmId string) error {
+// Delete - Delete a Virtual Disk Mapping
+func (v *VdmService) Delete(vmID string, vdmID string) error {
 
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VmDiskMapping/%s", vmId, vdmId)
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VmDiskMapping/%s", vmID, vdmID)
 	req, err := v.client.NewRequest("DELETE", url, nil, nil)
 	if err != nil {
 		fmt.Println("error")
@@ -86,8 +92,8 @@ func (v *VdmService) Delete(vmId string, vdmId string) error {
 		return err
 	}
 
-	v.client.Jobs.WaitForJob(m.Id.Value)
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return j.Error
 	}

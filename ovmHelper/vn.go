@@ -1,14 +1,16 @@
-package ovmHelper
+package ovmhelper
 
 import (
 	"fmt"
 	"log"
 )
 
+// VnService - Virtual NIC interface
 type VnService struct {
 	client *Client
 }
 
+// Read - Read the virtual nic object
 func (v *VnService) Read(id string) (*Vn, error) {
 	req, err := v.client.NewRequest("GET", "/ovm/core/wsapi/rest/VirtualNic/"+id, nil, nil)
 	if err != nil {
@@ -25,10 +27,11 @@ func (v *VnService) Read(id string) (*Vn, error) {
 	return m, err
 }
 
-func (v *VnService) Create(vmId string, vn Vn) (*string, error) {
+// Create - Create the virtual nic object
+func (v *VnService) Create(vmID string, vn Vn) (*string, error) {
 	params := make(map[string]string)
-	params["vmid"] = vmId
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VirtualNic", vmId)
+	params["vmid"] = vmID
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VirtualNic", vmID)
 	req, err := v.client.NewRequest("POST", url, params, vn)
 	if err != nil {
 		return nil, err
@@ -43,16 +46,17 @@ func (v *VnService) Create(vmId string, vn Vn) (*string, error) {
 		return nil, err
 	}
 
-	v.client.Jobs.WaitForJob(m.Id.Value)
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return nil, j.Error
 	}
-	return &j.ResultId.Value, err
+	return &j.ResultID.Value, err
 }
 
-func (v *VnService) Delete(vnId string, vn Vn) error {
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VirtualNic/%s", vn.VmId.Value, vnId)
+// Delete - Delete the virtual nic object
+func (v *VnService) Delete(vnID string, vn Vn) error {
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VirtualNic/%s", vn.VMID.Value, vnID)
 	req, err := v.client.NewRequest("DELETE", url, nil, nil)
 	if err != nil {
 		fmt.Println("error")
@@ -67,8 +71,8 @@ func (v *VnService) Delete(vnId string, vn Vn) error {
 		return err
 	}
 
-	v.client.Jobs.WaitForJob(m.Id.Value)
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return j.Error
 	}

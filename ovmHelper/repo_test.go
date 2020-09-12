@@ -1,4 +1,4 @@
-package ovmHelper
+package ovmhelper
 
 import (
 	"testing"
@@ -8,12 +8,12 @@ func TestAccRepos(t *testing.T) {
 	testAccPreChecks(t)
 	c := testAccGenerateClient(t)
 
-	t.Run("GetIdFromName", testAccGetIdFromName(c))
+	t.Run("GetIdFromName", testAccGetIDFromName(c))
 }
 
-func testAccGetIdFromName(c *Client) func(*testing.T) {
+func testAccGetIDFromName(c *Client) func(*testing.T) {
 	return func(t *testing.T) {
-		i, err := c.Repos.GetIdFromName("ovm-corp-repository")
+		i, err := c.Repos.GetIDFromName("ovm-corp-repository")
 
 		if err != nil {
 			t.Fatalf("[error] Could not get ID: %s", err)

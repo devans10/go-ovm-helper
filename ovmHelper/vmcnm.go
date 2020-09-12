@@ -1,16 +1,18 @@
-package ovmHelper
+package ovmhelper
 
 import (
 	"fmt"
 	"log"
 )
 
+// VmcnmService - Virtual Machine Clone Network Mapping interface
 type VmcnmService struct {
 	client *Client
 }
 
-func (v *VmcnmService) Read(vmcnmId string) (*Vmcnm, error) {
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/VmCloneNetworkMapping/%s", vmcnmId)
+// Read - Read a Virtual Machine Clone Network Mapping object
+func (v *VmcnmService) Read(vmcnmID string) (*Vmcnm, error) {
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/VmCloneNetworkMapping/%s", vmcnmID)
 	req, err := v.client.NewRequest("GET", url, nil, nil)
 	if err != nil {
 		return nil, err
@@ -24,8 +26,9 @@ func (v *VmcnmService) Read(vmcnmId string) (*Vmcnm, error) {
 	return m, err
 }
 
-func (v *VmcnmService) Create(vmCloneDefinitionId string, vmcnm Vmcnm) (*string, error) {
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/VmCloneDefinition/%s/VmCloneNetworkMapping", vmCloneDefinitionId)
+// Create - Create a virtual machine clone network mapping
+func (v *VmcnmService) Create(vmCloneDefinitionID string, vmcnm Vmcnm) (*string, error) {
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/VmCloneDefinition/%s/VmCloneNetworkMapping", vmCloneDefinitionID)
 	req, err := v.client.NewRequest("POST", url, nil, vmcnm)
 	if err != nil {
 		return nil, err
@@ -40,17 +43,18 @@ func (v *VmcnmService) Create(vmCloneDefinitionId string, vmcnm Vmcnm) (*string,
 		return nil, err
 	}
 
-	v.client.Jobs.WaitForJob(m.Id.Value)
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return nil, j.Error
 	}
 	log.Printf("[DEBUG] %v", j)
-	return &j.ResultId.Value, err
+	return &j.ResultID.Value, err
 }
 
-func (v *VmcnmService) Delete(vmCloneDefinitionId string, vmcnmId string) error {
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/VmCloneDefinition/%s/VmCloneNetworkMapping/%s", vmCloneDefinitionId, vmcnmId)
+// Delete - Delete a virtual machine network mapping
+func (v *VmcnmService) Delete(vmCloneDefinitionID string, vmcnmID string) error {
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/VmCloneDefinition/%s/VmCloneNetworkMapping/%s", vmCloneDefinitionID, vmcnmID)
 	req, err := v.client.NewRequest("DELETE", url, nil, nil)
 	if err != nil {
 		return err
@@ -65,8 +69,8 @@ func (v *VmcnmService) Delete(vmCloneDefinitionId string, vmcnmId string) error 
 		return err
 	}
 
-	v.client.Jobs.WaitForJob(m.Id.Value)
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return j.Error
 	}

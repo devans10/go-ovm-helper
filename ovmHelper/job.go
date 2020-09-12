@@ -1,13 +1,15 @@
-package ovmHelper
+package ovmhelper
 
 import (
 	"time"
 )
 
+// JobService - client to check OVM Manager Jobs
 type JobService struct {
 	client *Client
 }
 
+//  Read - Read the job Uri
 func (j *JobService) Read(id string) (*JobResponse, error) {
 	req, err := j.client.NewRequest("GET", "/ovm/core/wsapi/rest/Job/"+id, nil, nil)
 	if err != nil {
@@ -23,24 +25,21 @@ func (j *JobService) Read(id string) (*JobResponse, error) {
 	return m, err
 }
 
+// Running - check if a job is still running
 func (j *JobService) Running(id string) bool {
 
 	job, _ := j.Read(id)
 
 	if !job.Done {
 		return true
-	} else {
-		return false
 	}
-
+	return false
 }
 
+// WaitForJob - function to wait for job to complete
 func (j *JobService) WaitForJob(id string) {
-	duration := time.Duration(500000)
+	time.Sleep(1 * time.Second)
 	for j.Running(id) {
-		time.Sleep(duration * time.Microsecond)
-		if duration <= 5000000 {
-			duration += 500000
-		}
+		time.Sleep(5 * time.Second)
 	}
 }

@@ -1,12 +1,13 @@
-package ovmHelper
+package ovmhelper
 
+// Vn - Virtual Nic Interface
 type Vn struct {
 	MacAddress string `json:"macAddress,omitempty"`
 	//IpAddresses   *[]Id  `json:"ipAddresses,omitempty"`
 	//InterfaceName string `json:"interfaceName,omitempty"`
-	VmId      *Id    `json:"vmId,omitempty"`
-	NetworkId *Id    `json:"networkId,omitempty"`
-	Id        *Id    `json:"id,omitempty"`
+	VMID      *ID    `json:"vmId,omitempty"`
+	NetworkID *ID    `json:"networkId,omitempty"`
+	ID        *ID    `json:"id,omitempty"`
 	Name      string `json:"name,omitempty"`
 	//Description      string `json:description,omitempty"`
 	//Locked           bool   `json:locked,omitempty"`

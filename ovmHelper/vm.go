@@ -1,4 +1,4 @@
-package ovmHelper
+package ovmhelper
 
 import (
 	"encoding/json"
@@ -8,17 +8,19 @@ import (
 	"time"
 )
 
-type VmService struct {
+// VMService - Virtual Machine Interface
+type VMService struct {
 	client *Client
 }
 
-func (v *VmService) GetIdFromName(name string) (*Id, error) {
+// GetIDFromName - Return the ID of a virtual machine from its name
+func (v *VMService) GetIDFromName(name string) (*ID, error) {
 	req, err := v.client.NewRequest("GET", "/ovm/core/wsapi/rest/Vm/id", nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	m := []Id{}
+	m := []ID{}
 	_, err = v.client.Do(req, &m)
 
 	if err != nil {
@@ -27,21 +29,21 @@ func (v *VmService) GetIdFromName(name string) (*Id, error) {
 
 	for _, id := range m {
 		if id.Name == name {
-			returnId := id
-			return &returnId, nil
+			returnID := id
+			return &returnID, nil
 		}
 	}
 
 	return nil, errors.New("[error] Failed to find id for " + name)
 }
 
-func (v *VmService) Read(id string) (*Vm, error) {
+func (v *VMService) Read(id string) (*VM, error) {
 	req, err := v.client.NewRequest("GET", "/ovm/core/wsapi/rest/Vm/"+id, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	m := &Vm{}
+	m := &VM{}
 	_, err = v.client.Do(req, m)
 
 	if err != nil {
@@ -51,7 +53,8 @@ func (v *VmService) Read(id string) (*Vm, error) {
 	return m, err
 }
 
-func (v *VmService) Stop(id string) error {
+// Stop - Stop a virtual machine
+func (v *VMService) Stop(id string) error {
 	req, err := v.client.NewRequest("PUT", "/ovm/core/wsapi/rest/Vm/"+id+"/stop", nil, nil)
 	if err != nil {
 		return err
@@ -63,15 +66,16 @@ func (v *VmService) Stop(id string) error {
 		return err
 	}
 
-	v.client.Jobs.WaitForJob(m.Id.Value)
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return j.Error
 	}
 	return err
 }
 
-func (v *VmService) Start(id string) error {
+// Start - Start a virtual machine
+func (v *VMService) Start(id string) error {
 	req, err := v.client.NewRequest("PUT", "/ovm/core/wsapi/rest/Vm/"+id+"/start", nil, nil)
 	if err != nil {
 		return err
@@ -83,8 +87,8 @@ func (v *VmService) Start(id string) error {
 	if err != nil {
 		return err
 	}
-	v.client.Jobs.WaitForJob(m.Id.Value)
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return j.Error
 	}
@@ -92,7 +96,8 @@ func (v *VmService) Start(id string) error {
 	return err
 }
 
-func (v *VmService) CreateVm(vm Vm, cfgVm CfgVm) (*string, error) {
+// CreateVM - Create a new virtual machine
+func (v *VMService) CreateVM(vm VM, cfgVM CfgVM) (*string, error) {
 	req, err := v.client.NewRequest("POST", "/ovm/core/wsapi/rest/Vm", nil, vm)
 	if err != nil {
 		return nil, err
@@ -105,43 +110,41 @@ func (v *VmService) CreateVm(vm Vm, cfgVm CfgVm) (*string, error) {
 	if err != nil {
 		return nil, err
 	}
-	v.client.Jobs.WaitForJob(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
 
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return nil, j.Error
 	}
 
-	if cfgVm.NetworkId != "" {
-		vn := Vn{NetworkId: &Id{Type: "com.oracle.ovm.mgr.ws.model.Network",
-			Value: cfgVm.NetworkId},
-			VmId: &Id{Type: "com.oracle.ovm.mgr.ws.model.Vm",
-				Value: j.ResultId.Value,
+	if cfgVM.NetworkID != "" {
+		vn := Vn{NetworkID: &ID{Type: "com.oracle.ovm.mgr.ws.model.Network",
+			Value: cfgVM.NetworkID},
+			VMID: &ID{Type: "com.oracle.ovm.mgr.ws.model.Vm",
+				Value: j.ResultID.Value,
 			},
 		}
-		_, err = v.client.Vns.Create(j.ResultId.Value, vn)
+		_, err = v.client.Vns.Create(j.ResultID.Value, vn)
 		if err != nil {
-			return &j.ResultId.Value, err
+			return &j.ResultID.Value, err
 		}
-
-		//log.Printf("[DEBUG] cfgvm: %s", cfgVm)
-
 	}
 
-	return &j.ResultId.Value, err
+	return &j.ResultID.Value, err
 }
 
-func (v *VmService) CloneVm(cloneVmId string, vmCloneDefinitionId string, vm Vm, cfgVm CfgVm) (*string, error) {
+// CloneVM - Clone a VM from another VM or Template
+func (v *VMService) CloneVM(cloneVMID string, vmCloneDefinitionID string, vm VM, cfgVM CfgVM) (*string, error) {
 
 	params := make(map[string]string)
-	params["vmId"] = cloneVmId
-	params["serverPoolId"] = vm.ServerPoolId.Value
-	params["repositoryId"] = vm.RepositoryId.Value
-	if vmCloneDefinitionId != "" {
-		params["vmCloneDefinitionId"] = vmCloneDefinitionId
+	params["vmId"] = cloneVMID
+	params["serverPoolId"] = vm.ServerPoolID.Value
+	params["repositoryId"] = vm.RepositoryID.Value
+	if vmCloneDefinitionID != "" {
+		params["vmCloneDefinitionId"] = vmCloneDefinitionID
 	}
 
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/clone", cloneVmId)
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/clone", cloneVMID)
 	req, err := v.client.NewRequest("PUT", url, params, nil)
 	if err != nil {
 		return nil, err
@@ -154,68 +157,69 @@ func (v *VmService) CloneVm(cloneVmId string, vmCloneDefinitionId string, vm Vm,
 		return nil, err
 	}
 
-	v.client.Jobs.WaitForJob(m.Id.Value)
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if err != nil {
 		return nil, err
 	}
 
 	jsonJobResult, _ := json.Marshal(j)
 	log.Printf("[DEBUG] %v", string(jsonJobResult))
-	vm.Id = &Id{Value: j.ResultId.Value,
+	vm.ID = &ID{Value: j.ResultID.Value,
 		Type: "com.oracle.ovm.mgr.ws.model.Vm"}
 
-	log.Printf("[INFO] Update vmId: %s", j.ResultId.Value)
-	err = v.client.Vms.UpdateVm(j.ResultId.Value, vm)
+	log.Printf("[INFO] Update vmId: %s", j.ResultID.Value)
+	err = v.client.Vms.UpdateVM(j.ResultID.Value, vm)
 	if err != nil {
 		return nil, err
 	}
 
-	err = v.client.Vms.Start(j.ResultId.Value)
+	err = v.client.Vms.Start(j.ResultID.Value)
 	if err != nil {
 		return nil, err
 	}
 
-	err = v.client.Vms.SendMessageToVm(j.ResultId.Value, cfgVm)
+	err = v.client.Vms.SendMessageToVM(j.ResultID.Value, cfgVM)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	err = v.client.Vms.SendRootPasswordToVm(j.ResultId.Value, cfgVm)
+	err = v.client.Vms.SendRootPasswordToVM(j.ResultID.Value, cfgVM)
 	if err != nil {
 		fmt.Println(err)
 	}
-	return &j.ResultId.Value, err
+	return &j.ResultID.Value, err
 }
 
-func (v *VmService) UpdateVm(vmId string, vm Vm) error {
+// UpdateVM - Update the settings of a VM
+func (v *VMService) UpdateVM(vmID string, vm VM) error {
 	p := make(map[string]string)
 
-	p["vmId"] = vmId
-	rVm, _ := v.client.Vms.Read(vmId)
+	p["vmId"] = vmID
+	rVM, _ := v.client.Vms.Read(vmID)
 
-	rVm.Name = vm.Name
-	rVm.Description = vm.Description
-	rVm.BootOrder = vm.BootOrder
-	rVm.CpuCount = vm.CpuCount
-	rVm.CpuCountLimit = vm.CpuCountLimit
-	rVm.CpuPriority = vm.CpuPriority
-	rVm.CpuUtilizationCap = vm.CpuUtilizationCap
-	rVm.HighAvailability = vm.HighAvailability
-	rVm.HugePagesEnabled = vm.HugePagesEnabled
-	rVm.KeymapName = vm.KeymapName
-	rVm.Memory = vm.Memory
-	rVm.MemoryLimit = vm.MemoryLimit
-	rVm.NetworkInstallPath = vm.NetworkInstallPath
-	rVm.OsType = vm.OsType
-	rVm.ServerId = vm.ServerId
-	rVm.VmDomainType = vm.VmDomainType
-	rVm.VmMouseType = vm.VmMouseType
-	rVm.VmRunState = vm.VmRunState
-	rVm.VmStartPolicy = vm.VmStartPolicy
-	rVm.RestartActionOnCrash = vm.RestartActionOnCrash	
-	
-	req, err := v.client.NewRequest("PUT", "/ovm/core/wsapi/rest/Vm/"+vmId, p, rVm)
+	rVM.Name = vm.Name
+	rVM.Description = vm.Description
+	rVM.BootOrder = vm.BootOrder
+	rVM.CPUCount = vm.CPUCount
+	rVM.CPUCountLimit = vm.CPUCountLimit
+	rVM.CPUPriority = vm.CPUPriority
+	rVM.CPUUtilizationCap = vm.CPUUtilizationCap
+	rVM.HighAvailability = vm.HighAvailability
+	rVM.HugePagesEnabled = vm.HugePagesEnabled
+	rVM.KeymapName = vm.KeymapName
+	rVM.Memory = vm.Memory
+	rVM.MemoryLimit = vm.MemoryLimit
+	rVM.NetworkInstallPath = vm.NetworkInstallPath
+	rVM.OsType = vm.OsType
+	rVM.ServerID = vm.ServerID
+	rVM.VMDomainType = vm.VMDomainType
+	rVM.VMMouseType = vm.VMMouseType
+	rVM.VMRunState = vm.VMRunState
+	rVM.VMStartPolicy = vm.VMStartPolicy
+	rVM.RestartActionOnCrash = vm.RestartActionOnCrash
+
+	req, err := v.client.NewRequest("PUT", "/ovm/core/wsapi/rest/Vm/"+vmID, p, rVM)
 	if err != nil {
 		return err
 	}
@@ -226,17 +230,18 @@ func (v *VmService) UpdateVm(vmId string, vm Vm) error {
 		fmt.Println("inside error")
 		return err
 	}
-	v.client.Jobs.WaitForJob(m.Id.Value)
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 
-	jobJson, _ := json.Marshal(j)
-	log.Printf("[DEBUG] %v", string(jobJson))
+	jobJSON, _ := json.Marshal(j)
+	log.Printf("[DEBUG] %v", string(jobJSON))
 	return err
 }
 
-func (v *VmService) DeleteVm(vmId string) error {
+// DeleteVM - Delete a Virtual Machine
+func (v *VMService) DeleteVM(vmID string) error {
 
-	req, err := v.client.NewRequest("DELETE", "/ovm/core/wsapi/rest/Vm/"+vmId, nil, nil)
+	req, err := v.client.NewRequest("DELETE", "/ovm/core/wsapi/rest/Vm/"+vmID, nil, nil)
 	if err != nil {
 		return err
 	}
@@ -248,8 +253,8 @@ func (v *VmService) DeleteVm(vmId string) error {
 		return err
 	}
 
-	v.client.Jobs.WaitForJob(m.Id.Value)
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return j.Error
 	}
@@ -257,10 +262,11 @@ func (v *VmService) DeleteVm(vmId string) error {
 	return err
 }
 
-func (v *VmService) SendMessageToVm(vmId string, cfgVm CfgVm) error {
+// SendMessageToVM - Send a message to a virtual machine via OVMD daemon
+func (v *VMService) SendMessageToVM(vmID string, cfgVM CfgVM) error {
 	time.Sleep(30 * time.Second)
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/sendMessage", vmId)
-	req, err := v.client.NewRequest("PUT", url, nil, cfgVm.SendMessages)
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/sendMessage", vmID)
+	req, err := v.client.NewRequest("PUT", url, nil, cfgVM.SendMessages)
 	if err != nil {
 		return err
 	}
@@ -270,19 +276,20 @@ func (v *VmService) SendMessageToVm(vmId string, cfgVm CfgVm) error {
 	if err != nil {
 		return err
 	}
-	v.client.Jobs.WaitForJob(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
 
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return j.Error
 	}
 	return err
 }
 
-func (v *VmService) SendRootPasswordToVm(vmId string, cfgVm CfgVm) error {
+// SendRootPasswordToVM - Send the root password to a vm
+func (v *VMService) SendRootPasswordToVM(vmID string, cfgVM CfgVM) error {
 	time.Sleep(5 * time.Second)
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/sendMessage", vmId)
-	req, err := v.client.NewRequest("PUT", url, nil, cfgVm.RootPassword)
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/sendMessage", vmID)
+	req, err := v.client.NewRequest("PUT", url, nil, cfgVM.RootPassword)
 	if err != nil {
 		return err
 	}
@@ -292,9 +299,9 @@ func (v *VmService) SendRootPasswordToVm(vmId string, cfgVm CfgVm) error {
 	if err != nil {
 		return err
 	}
-	v.client.Jobs.WaitForJob(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
 
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return j.Error
 	}

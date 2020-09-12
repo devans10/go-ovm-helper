@@ -1,20 +1,22 @@
-package ovmHelper
+package ovmhelper
 
 import (
 	"errors"
 )
 
+// ServerPoolService - interface for a ServerPool
 type ServerPoolService struct {
 	client *Client
 }
 
-func (s *ServerPoolService) GetIdFromName(name string) (*Id, error) {
+// GetIDFromName - return the ID for a ServerPool from the name
+func (s *ServerPoolService) GetIDFromName(name string) (*ID, error) {
 	req, err := s.client.NewRequest("GET", "/ovm/core/wsapi/rest/ServerPool/id", nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	m := []Id{}
+	m := []ID{}
 	_, err = s.client.Do(req, &m)
 
 	if err != nil {
@@ -23,21 +25,21 @@ func (s *ServerPoolService) GetIdFromName(name string) (*Id, error) {
 
 	for _, r := range m {
 		if r.Name == name {
-			returnId := r
-			return &returnId, nil
+			returnID := r
+			return &returnID, nil
 		}
 	}
 
 	return nil, errors.New("[error] Failed to find id for " + name)
 }
 
-func (s *ServerPoolService) Read(id string) (*Id, error) {
+func (s *ServerPoolService) Read(id string) (*ID, error) {
 	req, err := s.client.NewRequest("GET", "/ovm/core/wsapi/rest/ServerPool/"+id, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	m := &Id{}
+	m := &ID{}
 	_, err = s.client.Do(req, m)
 
 	if err != nil {

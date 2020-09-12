@@ -1,16 +1,18 @@
-package ovmHelper
+package ovmhelper
 
 import (
 	"fmt"
 	"log"
 )
 
+// VmcdService - Virtual Machice Clone Definition interface
 type VmcdService struct {
 	client *Client
 }
 
-func (v *VmcdService) Read(vmcdId string) (*Vmcd, error) {
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/VmCloneDefinition/%s", vmcdId)
+// Read - Read the Virtual Machine Clone Definition
+func (v *VmcdService) Read(vmcdID string) (*Vmcd, error) {
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/VmCloneDefinition/%s", vmcdID)
 	req, err := v.client.NewRequest("GET", url, nil, nil)
 	if err != nil {
 		return nil, err
@@ -24,8 +26,9 @@ func (v *VmcdService) Read(vmcdId string) (*Vmcd, error) {
 	return m, err
 }
 
-func (v *VmcdService) Create(VmId string, vmcd Vmcd) (*string, error) {
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VmCloneDefinition", VmId)
+// Create - Create a Virtual Machine Clone Definition
+func (v *VmcdService) Create(VMID string, vmcd Vmcd) (*string, error) {
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VmCloneDefinition", VMID)
 	req, err := v.client.NewRequest("POST", url, nil, vmcd)
 	if err != nil {
 		return nil, err
@@ -40,16 +43,17 @@ func (v *VmcdService) Create(VmId string, vmcd Vmcd) (*string, error) {
 		return nil, err
 	}
 
-	v.client.Jobs.WaitForJob(m.Id.Value)
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return nil, j.Error
 	}
-	return &j.ResultId.Value, err
+	return &j.ResultID.Value, err
 }
 
-func (v *VmcdService) Delete(vmId string, vmCloneDefinitionId string) error {
-	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VmCloneDefinition/%s", vmId, vmCloneDefinitionId)
+// Delete - Delete a Virtual Machine Clone Definition
+func (v *VmcdService) Delete(vmID string, vmCloneDefinitionID string) error {
+	url := fmt.Sprintf("/ovm/core/wsapi/rest/Vm/%s/VmCloneDefinition/%s", vmID, vmCloneDefinitionID)
 	req, err := v.client.NewRequest("DELETE", url, nil, nil)
 	if err != nil {
 		return err
@@ -63,8 +67,8 @@ func (v *VmcdService) Delete(vmId string, vmCloneDefinitionId string) error {
 		return err
 	}
 
-	v.client.Jobs.WaitForJob(m.Id.Value)
-	j, _ := v.client.Jobs.Read(m.Id.Value)
+	v.client.Jobs.WaitForJob(m.ID.Value)
+	j, _ := v.client.Jobs.Read(m.ID.Value)
 	if !j.succeed() {
 		return j.Error
 	}

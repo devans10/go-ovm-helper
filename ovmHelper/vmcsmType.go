@@ -1,17 +1,18 @@
-package ovmHelper
+package ovmhelper
 
+// Vmcsm - VM Clone Storage Mapping
 type Vmcsm struct {
-	VmDiskMappingId     *Id    `json:"vmDiskMappingId,omitempty"`
-	VmCloneDefinitionId *Id    `json:"vmCloneDefinitionId,omitempty"`
-	RepositoryId        *Id    `json:"repositoryId,omitempty"`
-	StorageArrayId      *Id    `json:"storageArrayId,omitempty"`
-	StorageElementId    *Id    `json:",omitempty"`
-	Id                  *Id    `json:"id,omitempty"`
+	VMDiskMappingID     *ID    `json:"vmDiskMappingId,omitempty"`
+	VMCloneDefinitionID *ID    `json:"vmCloneDefinitionId,omitempty"`
+	RepositoryID        *ID    `json:"repositoryId,omitempty"`
+	StorageArrayID      *ID    `json:"storageArrayId,omitempty"`
+	StorageElementID    *ID    `json:",omitempty"`
+	ID                  *ID    `json:"id,omitempty"`
 	CloneType           string `json:"cloneType,omitempty"`
 	Name                string `json:"name,omitempty"`
 	Description         string `json:"description,omitempty"`
 	Locked              bool   `json:"locked,imitempty"`
 	ReadOnly            bool   `json:"readOnly,omitempty"`
 	Generation          int    `json:"generation,omitempty"`
-	ResourceGroupIds    *[]Id  `json:"resourceGroupIds,omitempty"`
+	ResourceGroupIds    *[]ID  `json:"resourceGroupIds,omitempty"`
 }
