@@ -27,6 +27,7 @@ type Client struct {
 	Jobs       *JobService
 	Repos      *RepoService
 	ServerPool *ServerPoolService
+	Network    *NetworkService
 }
 
 // NewClient - instanciate a new client object
@@ -47,6 +48,7 @@ func NewClient(user string, password string, endpoint string) *Client {
 	c.Jobs = &JobService{client: c}
 	c.Repos = &RepoService{client: c}
 	c.ServerPool = &ServerPoolService{client: c}
+	c.Network = &NetworkService{client: c}
 	return c
 }
 
