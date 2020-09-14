@@ -174,20 +174,6 @@ func (v *VMService) CloneVM(cloneVMID string, vmCloneDefinitionID string, vm VM,
 		return nil, err
 	}
 
-	err = v.client.Vms.Start(j.ResultID.Value)
-	if err != nil {
-		return nil, err
-	}
-
-	err = v.client.Vms.SendMessageToVM(j.ResultID.Value, cfgVM)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	err = v.client.Vms.SendRootPasswordToVM(j.ResultID.Value, cfgVM)
-	if err != nil {
-		fmt.Println(err)
-	}
 	return &j.ResultID.Value, err
 }
 
